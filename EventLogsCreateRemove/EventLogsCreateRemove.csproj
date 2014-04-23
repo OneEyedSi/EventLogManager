@@ -61,6 +61,10 @@
       <Project>{2015f950-9ca7-4fde-898d-eb4f102dc510}</Project>
       <Name>MenuLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{0d67df59-67f6-4745-81d5-dcc159b1b265}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
