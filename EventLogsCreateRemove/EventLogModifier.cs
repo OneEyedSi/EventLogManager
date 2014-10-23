@@ -50,8 +50,15 @@ namespace EventLogsCreateRemove
                             eventSource.Name, eventLog.Name);
                         try
                         {
-                            EventLog.CreateEventSource(eventSource.Name, eventLog.Name);
-                            Console.WriteLine("Done.");
+                            if (EventLog.SourceExists(eventSource.Name))
+                            {
+                                Console.WriteLine("Source already exists.");
+                            }
+                            else
+                            {
+                                EventLog.CreateEventSource(eventSource.Name, eventLog.Name);
+                                Console.WriteLine("Done.");
+                            }
                         }
                         catch (SecurityException ex)
                         {
@@ -59,14 +66,22 @@ namespace EventLogsCreateRemove
                         }
                     }
                     else
-                    {
+                    {                        
                         Console.WriteLine("Creating event source {0} for event log {1} on machine {2}...",
-                            eventSource.Name, eventLog.Name, _eventLogsConfig.MachineName);                        
+                            eventSource.Name, eventLog.Name, _eventLogsConfig.MachineName);
                         try
                         {
-                            EventLog.CreateEventSource(eventSource.Name, eventLog.Name,
-                                _eventLogsConfig.MachineName);
-                            Console.WriteLine("Done.");
+                            if (EventLog.SourceExists(eventSource.Name, 
+                                _eventLogsConfig.MachineName))
+                            {
+                                Console.WriteLine("Source already exists.");
+                            }
+                            else
+                            {
+                                EventLog.CreateEventSource(eventSource.Name, eventLog.Name,
+                                    _eventLogsConfig.MachineName);
+                                Console.WriteLine("Done.");
+                            }
                         }
                         catch (SecurityException ex)
                         {
@@ -98,8 +113,15 @@ namespace EventLogsCreateRemove
                         eventLog.Name);                    
                     try
                     {
-                        EventLog.Delete(eventLog.Name);
-                        Console.WriteLine("Done.");
+                        if (!EventLog.Exists(eventLog.Name))
+                        {
+                            Console.WriteLine("Log does not exist.");
+                        }
+                        else
+                        {
+                            EventLog.Delete(eventLog.Name);
+                            Console.WriteLine("Done.");
+                        }
                     }
                     catch (SecurityException ex)
                     {
@@ -112,8 +134,15 @@ namespace EventLogsCreateRemove
                         eventLog.Name, _eventLogsConfig.MachineName);
                     try
                     {
-                        EventLog.Delete(eventLog.Name, _eventLogsConfig.MachineName);
-                        Console.WriteLine("Done.");
+                        if (!EventLog.Exists(eventLog.Name, _eventLogsConfig.MachineName))
+                        {
+                            Console.WriteLine("Log does not exist.");
+                        }
+                        else
+                        {
+                            EventLog.Delete(eventLog.Name, _eventLogsConfig.MachineName);
+                            Console.WriteLine("Done.");
+                        }
                     }
                     catch (SecurityException ex)
                     {
