@@ -3,6 +3,7 @@ using System.Configuration;
 
 namespace EventLogsCreateRemove.CustomConfigSection
 {
+    [ConfigurationCollection(typeof(EventLogElement))]
     public class EventLogsCollection : ConfigurationElementCollection
     {
         /// <summary>
