@@ -50,7 +50,7 @@
     <Compile Include="CustomConfigSection\EventSourceElement.cs" />
     <Compile Include="CustomConfigSection\EventSourcesCollection.cs" />
     <Compile Include="CustomConfigSection\RemoveElement.cs" />
-    <Compile Include="EventLogModifier.cs" />
+    <Compile Include="EventLogManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

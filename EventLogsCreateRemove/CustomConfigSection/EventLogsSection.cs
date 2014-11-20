@@ -20,7 +20,22 @@ namespace EventLogsCreateRemove.CustomConfigSection
         }
 
         [ConfigurationProperty("machineName", IsRequired = false)]
-        public string MachineName { get { return (string)this["machineName"]; } }
+        public string MachineName
+        {
+            get
+            {
+                // "." represents the local machine.  
+                //  As seen in decompiled code in 
+                //  System.Diagnostics.EventLog.FindSourceRegistration().
+                string machineName = ".";
+                string configMachineName = (string)this["machineName"];
+                if (configMachineName != null && configMachineName.Trim().Length > 0)
+                {
+                    machineName = configMachineName;
+                }
+                return machineName;
+            }
+        }
 
         [ConfigurationProperty("add", IsRequired = false)]
         public AddElement Add { get { return this["add"] as AddElement; } }
