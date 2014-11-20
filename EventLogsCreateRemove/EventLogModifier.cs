@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Security;
 using System.Text;
-using System.Threading.Tasks;
 
 using EventLogsCreateRemove.CustomConfigSection;
 using MenuLibrary;
@@ -32,14 +30,14 @@ namespace EventLogsCreateRemove
                         + "  Cannot create event log without an event source.");
                 }
 
-                if (string.IsNullOrWhiteSpace(eventLog.Name))
+                if (eventLog.Name == null || eventLog.Name.Trim().Length == 0)
                 {
                     throw new ArgumentException("Cannot create event log without a name.");
                 }
 
                 foreach (EventSourceElement eventSource in eventLog.EventSources)
                 {
-                    if (string.IsNullOrWhiteSpace(eventSource.Name))
+                    if (eventSource.Name == null || eventSource.Name.Trim().Length == 0)
                     {
                         throw new ArgumentException("Cannot create event source without a name.");
                     }
@@ -102,7 +100,7 @@ namespace EventLogsCreateRemove
 
             foreach (EventLogElement eventLog in _eventLogsConfig.Remove.EventLogs)
             {
-                if (string.IsNullOrWhiteSpace(eventLog.Name))
+                if (eventLog.Name == null || eventLog.Name.Trim().Length == 0)
                 {
                     throw new ArgumentException("Cannot remove event log without a name.");
                 }
@@ -154,7 +152,7 @@ namespace EventLogsCreateRemove
 
             foreach (EventSourceElement eventSource in _eventLogsConfig.Remove.EventSources)
             {
-                if (string.IsNullOrWhiteSpace(eventSource.Name))
+                if (eventSource.Name == null || eventSource.Name.Trim().Length == 0)
                 {
                     throw new ArgumentException("Cannot remove event source without a name.");
                 }
@@ -193,7 +191,7 @@ namespace EventLogsCreateRemove
 
         private static bool IsLocalMachine(EventLogsSection eventLogsConfig)
         {
-            if (string.IsNullOrWhiteSpace(eventLogsConfig.MachineName))
+            if (eventLogsConfig.MachineName == null || eventLogsConfig.MachineName.Trim().Length == 0)
             {
                 return true;
             }
