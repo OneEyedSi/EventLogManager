@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomConfigSection\AddElement.cs" />
+    <Compile Include="CustomConfigSection\ListElement.cs" />
     <Compile Include="CustomConfigSection\EventLogElement.cs" />
     <Compile Include="CustomConfigSection\EventLogsCollection.cs" />
     <Compile Include="CustomConfigSection\EventLogsSection.cs" />

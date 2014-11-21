@@ -148,6 +148,175 @@ namespace EventLogsCreateRemove
             }
         }
 
+        [MenuMethod("List event logs and sources specified in config")]
+        public static void ListEventLogsAndSources()
+        {
+            string errorMessage = null;
+            bool errorOccurred = false;
+            bool isLocalMachine = IsLocalMachine(_eventLogsConfig);
+
+            string machineNameDisplayText = "";
+            if (isLocalMachine)
+            {
+                machineNameDisplayText = "local machine";
+            }
+            else
+            {
+                machineNameDisplayText = "machine " + _eventLogsConfig.MachineName;
+            }
+
+            Console.WriteLine();
+
+            EventLog[] existingLogs = { };
+            try
+            {
+                // All event logs on specified machine.
+                existingLogs = EventLog.GetEventLogs(_eventLogsConfig.MachineName);
+            }
+            catch (SecurityException ex)
+            {
+                errorOccurred = true;
+                errorMessage =
+                    string.Format("Unable to get all event logs on {0}.", 
+                        machineNameDisplayText);
+                DisplaySecurityMessage(ex, errorMessage);
+                return;
+            }
+            
+            string[] logNameArray =
+                Array.ConvertAll(existingLogs, delegate(EventLog log) { return log.Log; });
+            List<string> existingLogNames = new List<string>(logNameArray);
+
+            EventLogsCollection eventLogsInConfig = _eventLogsConfig.List.EventLogs;
+
+            // If no event logs are specified in the config file list them all.
+            bool listAllEventLogs = (eventLogsInConfig.Count <= 0);
+
+            Console.WriteLine("listAllEventLogs: {0}", listAllEventLogs);
+
+            List<string> eventLogNamesToList = new List<string>();
+            if (listAllEventLogs)
+            {
+                eventLogNamesToList = new List<string>(existingLogNames);
+            }
+            else
+            {
+                foreach (EventLogElement eventLogInConfig in eventLogsInConfig)
+                {
+                    eventLogNamesToList.Add(eventLogInConfig.Name);
+                }
+            }
+
+            string indent = new string(' ', 4);
+            foreach (string logNameToList in eventLogNamesToList)
+            {
+                if (!existingLogNames.Contains(logNameToList))
+                {
+                    Console.WriteLine("Log {0}: [NOT FOUND ON MACHINE]", logNameToList);
+                    continue;
+                }
+
+                Console.WriteLine("Log {0}:", logNameToList);
+                Console.WriteLine("{0}Sources:", indent);
+
+                RegistryKey logRegistryKey = null;
+                try
+                {
+                    logRegistryKey =
+                        GetEventLogRegistryKey(logNameToList, _eventLogsConfig.MachineName);
+                }
+                catch (SecurityException ex)
+                {
+                    errorOccurred = true;
+                    errorMessage =
+                        string.Format("Unable to access registry key"
+                            + " for event log {0} on {1}.",
+                            logNameToList, machineNameDisplayText);
+                    DisplaySecurityMessage(ex, errorMessage);
+                    continue;
+                }
+
+                if (logRegistryKey == null)
+                {
+                    Console.WriteLine("{0}{0}[NONE FOUND]", indent);
+                    continue;
+                }
+
+                string[] sourceNames = { };
+                try
+                {
+                    // Based on decompiled code in System.Diagnostics.EventLog.FindSourceRegistration().
+                    sourceNames = logRegistryKey.GetSubKeyNames();
+                }
+                catch (SecurityException ex)
+                {
+                    errorOccurred = true;
+                    errorMessage =
+                    string.Format("Unable to get all registry sub-keys"
+                            + " for event log {0} on machine {1}.",
+                            logNameToList, machineNameDisplayText);
+                    DisplaySecurityMessage(ex, errorMessage);
+                    continue;
+                }
+                
+                if (sourceNames == null || sourceNames.Length <= 0)
+                {
+                    Console.WriteLine("{0}{0}[NONE FOUND]", indent);
+                    continue;
+                }
+
+                foreach (string sourceName in sourceNames)
+                {
+                    Console.WriteLine("{0}{0}{1}", indent, sourceName);
+                }
+            }
+
+            Console.WriteLine();
+            if (errorOccurred)
+            {
+                Console.WriteLine("COMPLETED WITH ERRORS - SEE ERROR MESSAGES ABOVE.");
+            }
+            else
+            {
+                Console.WriteLine("Completed.");
+            }
+        }
+
+        /// <remarks>Based on decompiled code in System.Diagnostics.EventLog.GetEventLogRegKey()</remarks>
+        private static RegistryKey GetEventLogRegistryKey(string logName, string machineName)
+        {
+            bool writable = false;
+
+            RegistryKey registryKey = (RegistryKey)null;
+            try
+            {
+                if (machineName.Trim() == ".")
+                {
+                    registryKey = Registry.LocalMachine;
+                }
+                else
+                {
+                    registryKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, machineName);
+                }
+
+                if (registryKey == null)
+                {
+                    return null;
+                }
+
+                // NB: Need to run this application as Administrator to access the Security event log registry key.
+                return registryKey.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\EventLog\" + logName, writable);
+            }
+            // No catch block.  Want exception to bubble up.
+            finally
+            {
+                if (registryKey != null)
+                {
+                    registryKey.Close();
+                }
+            }
+        }
+
         private static bool IsLocalMachine(EventLogsSection eventLogsConfig)
         {
             if (eventLogsConfig.MachineName == null 
@@ -186,11 +355,29 @@ namespace EventLogsCreateRemove
 
         private static void DisplaySecurityMessage(SecurityException ex)
         {
+            DisplaySecurityMessage(ex, null);
+        }
+
+        private static void DisplaySecurityMessage(SecurityException ex, string errorMessage)
+        {
             bool wrapText = true;
             bool includeNewLine = true;
+
+            if (errorMessage == null)
+            {
+                errorMessage = "";
+            }
+            else if (errorMessage.Trim().Length > 0)
+            {
+                errorMessage = "  " + errorMessage.Trim();
+            }
+
             Console.WriteLine();
+
             ConsoleDisplayHelper.ShowHeadedText(0,
-                "SecurityException: You need to run this application as Administrator."
+                "SecurityException:" 
+                + errorMessage 
+                + "  You need to run this application as Administrator."
                 + "  Right-click the executable and select 'Run as administrator' from the"
                 + " context menu.",
                 wrapText, includeNewLine);

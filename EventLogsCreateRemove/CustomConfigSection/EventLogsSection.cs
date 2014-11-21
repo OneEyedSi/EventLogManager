@@ -42,5 +42,8 @@ namespace EventLogsCreateRemove.CustomConfigSection
 
         [ConfigurationProperty("remove", IsRequired = false)]
         public RemoveElement Remove { get { return this["remove"] as RemoveElement; } }
+
+        [ConfigurationProperty("list", IsRequired = false)]
+        public ListElement List { get { return this["list"] as ListElement; } }
     }
 }
