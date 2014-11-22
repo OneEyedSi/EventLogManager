@@ -38,10 +38,10 @@ namespace EventLogsCreateRemove.CustomConfigSection
         }
 
         [ConfigurationProperty("add", IsRequired = false)]
-        public AddElement Add { get { return this["add"] as AddElement; } }
+        public LogsAndSourcesElement Add { get { return this["add"] as LogsAndSourcesElement; } }
 
         [ConfigurationProperty("remove", IsRequired = false)]
-        public RemoveElement Remove { get { return this["remove"] as RemoveElement; } }
+        public LogsAndSourcesElement Remove { get { return this["remove"] as LogsAndSourcesElement; } }
 
         [ConfigurationProperty("list", IsRequired = false)]
         public ListElement List { get { return this["list"] as ListElement; } }
