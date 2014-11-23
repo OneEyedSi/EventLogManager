@@ -196,6 +196,11 @@ namespace EventLogsCreateRemove
                             _eventLogsConfig.MachineName))
                     {
                         Console.WriteLine("{0}Source exists.", indent);
+                        string associatedLogName = 
+                            EventLog.LogNameFromSourceName(eventSourceToCheck.Name, 
+                            _eventLogsConfig.MachineName);
+                        Console.WriteLine("{0}Associated Event Log: {1}", 
+                            indent, associatedLogName);
                     }
                     else
                     {
