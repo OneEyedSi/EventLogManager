@@ -19,17 +19,7 @@ namespace EventLogsCreateRemove
         [MenuMethod("Create event logs and sources specified in config")]
         public static void CreateEventLogsAndSources()
         {
-            bool isLocalMachine = IsLocalMachine(_eventLogsConfig);
-
-            string machineNameDisplayText = "";
-            if (isLocalMachine)
-            {
-                machineNameDisplayText = "local machine";
-            }
-            else
-            {
-                machineNameDisplayText = "machine " + _eventLogsConfig.MachineName;
-            }
+            string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
 
             Console.WriteLine();
 
@@ -84,17 +74,7 @@ namespace EventLogsCreateRemove
         [MenuMethod("Remove event logs and sources specified in config")]
         public static void RemoveEventLogsAndSources()
         {
-            bool isLocalMachine = IsLocalMachine(_eventLogsConfig);
-
-            string machineNameDisplayText = "";
-            if (isLocalMachine)
-            {
-                machineNameDisplayText = "local machine";
-            }
-            else
-            {
-                machineNameDisplayText = "machine " + _eventLogsConfig.MachineName;
-            }
+            string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
 
             Console.WriteLine();
 
@@ -154,17 +134,7 @@ namespace EventLogsCreateRemove
             string errorMessage = null;
             bool errorOccurred = false;
             string indent = new string(' ', 4);
-            bool isLocalMachine = IsLocalMachine(_eventLogsConfig);
-
-            string machineNameDisplayText = "";
-            if (isLocalMachine)
-            {
-                machineNameDisplayText = "local machine";
-            }
-            else
-            {
-                machineNameDisplayText = "machine " + _eventLogsConfig.MachineName;
-            }
+            string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
 
             Console.WriteLine();
 
@@ -348,6 +318,23 @@ namespace EventLogsCreateRemove
             }
 
             return false;
+        }
+
+        private static string GetMachineNameDisplayText(EventLogsSection eventLogsConfig)
+        {
+            bool isLocalMachine = IsLocalMachine(eventLogsConfig);
+
+            string machineNameDisplayText = "";
+            if (isLocalMachine)
+            {
+                machineNameDisplayText = "local machine";
+            }
+            else
+            {
+                machineNameDisplayText = "machine " + eventLogsConfig.MachineName;
+            }
+
+            return machineNameDisplayText;
         }
 
         /// <summary>
