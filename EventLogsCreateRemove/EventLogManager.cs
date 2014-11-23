@@ -153,6 +153,7 @@ namespace EventLogsCreateRemove
         {
             string errorMessage = null;
             bool errorOccurred = false;
+            string indent = new string(' ', 4);
             bool isLocalMachine = IsLocalMachine(_eventLogsConfig);
 
             string machineNameDisplayText = "";
@@ -192,8 +193,6 @@ namespace EventLogsCreateRemove
             // If no event logs are specified in the config file list them all.
             bool listAllEventLogs = (eventLogsInConfig.Count <= 0);
 
-            Console.WriteLine("listAllEventLogs: {0}", listAllEventLogs);
-
             List<string> eventLogNamesToList = new List<string>();
             if (listAllEventLogs)
             {
@@ -207,7 +206,6 @@ namespace EventLogsCreateRemove
                 }
             }
 
-            string indent = new string(' ', 4);
             foreach (string logNameToList in eventLogNamesToList)
             {
                 if (!existingLogNames.Contains(logNameToList))
@@ -217,58 +215,10 @@ namespace EventLogsCreateRemove
                 }
 
                 Console.WriteLine("Log {0}:", logNameToList);
-                Console.WriteLine("{0}Sources:", indent);
 
-                RegistryKey logRegistryKey = null;
-                try
-                {
-                    logRegistryKey =
-                        GetEventLogRegistryKey(logNameToList, _eventLogsConfig.MachineName);
-                }
-                catch (SecurityException ex)
-                {
-                    errorOccurred = true;
-                    errorMessage =
-                        string.Format("Unable to access registry key"
-                            + " for event log {0} on {1}.",
-                            logNameToList, machineNameDisplayText);
-                    DisplaySecurityMessage(ex, errorMessage);
-                    continue;
-                }
-
-                if (logRegistryKey == null)
-                {
-                    Console.WriteLine("{0}{0}[NONE FOUND]", indent);
-                    continue;
-                }
-
-                string[] sourceNames = { };
-                try
-                {
-                    // Based on decompiled code in System.Diagnostics.EventLog.FindSourceRegistration().
-                    sourceNames = logRegistryKey.GetSubKeyNames();
-                }
-                catch (SecurityException ex)
-                {
-                    errorOccurred = true;
-                    errorMessage =
-                    string.Format("Unable to get all registry sub-keys"
-                            + " for event log {0} on machine {1}.",
-                            logNameToList, machineNameDisplayText);
-                    DisplaySecurityMessage(ex, errorMessage);
-                    continue;
-                }
-                
-                if (sourceNames == null || sourceNames.Length <= 0)
-                {
-                    Console.WriteLine("{0}{0}[NONE FOUND]", indent);
-                    continue;
-                }
-
-                foreach (string sourceName in sourceNames)
-                {
-                    Console.WriteLine("{0}{0}{1}", indent, sourceName);
-                }
+                bool completedSuccessfully = ListSourcesForEventLog(logNameToList, 
+                    machineNameDisplayText, indent);
+                errorOccurred |= !completedSuccessfully;
             }
 
             Console.WriteLine();
@@ -280,6 +230,67 @@ namespace EventLogsCreateRemove
             {
                 Console.WriteLine("Completed.");
             }
+        }
+
+        private static bool ListSourcesForEventLog(string logName,
+            string machineNameDisplayText, string indent)
+        {
+            string errorMessage = null;
+            bool completedSuccessfully = true;
+            bool completedWithError = false;
+            
+            Console.WriteLine("{0}Sources:", indent);
+
+            RegistryKey logRegistryKey = null;
+            try
+            {
+                logRegistryKey =
+                    GetEventLogRegistryKey(logName, _eventLogsConfig.MachineName);
+            }
+            catch (SecurityException ex)
+            {
+                errorMessage =
+                    string.Format("Unable to access registry key"
+                        + " for event log {0} on {1}.",
+                        logName, machineNameDisplayText);
+                DisplaySecurityMessage(ex, errorMessage);
+                return completedWithError;
+            }
+
+            if (logRegistryKey == null)
+            {
+                Console.WriteLine("{0}{0}[NONE FOUND]", indent);
+                return completedSuccessfully;
+            }
+
+            string[] sourceNames = { };
+            try
+            {
+                // Based on decompiled code in System.Diagnostics.EventLog.FindSourceRegistration().
+                sourceNames = logRegistryKey.GetSubKeyNames();
+            }
+            catch (SecurityException ex)
+            {
+                errorMessage =
+                string.Format("Unable to get all registry sub-keys"
+                        + " for event log {0} on machine {1}.",
+                        logName, machineNameDisplayText);
+                DisplaySecurityMessage(ex, errorMessage);
+                return completedWithError;
+            }
+
+            if (sourceNames == null || sourceNames.Length <= 0)
+            {
+                Console.WriteLine("{0}{0}[NONE FOUND]", indent);
+                return completedSuccessfully;
+            }
+
+            foreach (string sourceName in sourceNames)
+            {
+                Console.WriteLine("{0}{0}{1}", indent, sourceName);
+            }
+
+            return completedSuccessfully;
         }
 
         /// <remarks>Based on decompiled code in System.Diagnostics.EventLog.GetEventLogRegKey()</remarks>
