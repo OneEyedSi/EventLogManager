@@ -45,5 +45,8 @@ namespace EventLogsCreateRemove.CustomConfigSection
 
         [ConfigurationProperty("list", IsRequired = false)]
         public ListElement List { get { return this["list"] as ListElement; } }
+
+        [ConfigurationProperty("checkExistence", IsRequired = false)]
+        public LogsAndSourcesElement CheckExistence { get { return this["checkExistence"] as LogsAndSourcesElement; } }
     }
 }

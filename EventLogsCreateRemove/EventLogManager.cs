@@ -16,7 +16,8 @@ namespace EventLogsCreateRemove
     {
         private static EventLogsSection _eventLogsConfig = EventLogsSection.Settings;
 
-        [MenuMethod("Create event logs and sources specified in config")]
+        [MenuMethod("Create event logs and sources specified in config", 
+            DisplayOrder = 1)]
         public static void CreateEventLogsAndSources()
         {
             string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
@@ -71,7 +72,8 @@ namespace EventLogsCreateRemove
             }
         }
 
-        [MenuMethod("Remove event logs and sources specified in config")]
+        [MenuMethod("Remove event logs and sources specified in config", 
+            DisplayOrder = 2)]
         public static void RemoveEventLogsAndSources()
         {
             string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
@@ -128,7 +130,89 @@ namespace EventLogsCreateRemove
             }
         }
 
-        [MenuMethod("List event logs and sources specified in config")]
+        [MenuMethod("Check existence of event logs and sources specified in config", 
+            DisplayOrder = 3)]
+        public static void CheckEventLogsAndSources()
+        {
+            string errorMessage = null;
+            bool errorOccurred = false;
+            string indent = new string(' ', 4);
+            string machineNameDisplayText = GetMachineNameDisplayText(_eventLogsConfig);
+
+            Console.WriteLine();
+
+            foreach (EventLogElement eventLogToCheck in _eventLogsConfig.CheckExistence.EventLogs)
+            {
+                if (IsNullOrWhiteSpace(eventLogToCheck.Name))
+                {
+                    Console.WriteLine(
+                        "ArgumentException: An event log listed in the config file has no name.");
+                    Console.WriteLine();
+                    errorOccurred = true;
+                    continue;
+                }
+
+                Console.WriteLine("Checking event log {0} on {1}...",
+                        eventLogToCheck.Name, machineNameDisplayText);
+                try
+                {
+                    if (EventLog.Exists(eventLogToCheck.Name, _eventLogsConfig.MachineName))
+                    {
+                        Console.WriteLine("{0}Log exists.", indent);
+                        bool completedSuccessfully = ListSourcesForEventLog(eventLogToCheck.Name,
+                            machineNameDisplayText, indent);
+                        errorOccurred |= !completedSuccessfully;                        
+                    }
+                    else
+                    {
+                        Console.WriteLine("{0}LOG NOT FOUND.", indent);
+                    }
+                }
+                catch (SecurityException ex)
+                {
+                    DisplaySecurityMessage(ex);
+                    errorOccurred = true;
+                }
+                Console.WriteLine();
+            }
+
+            foreach (EventSourceElement eventSourceToCheck in 
+                _eventLogsConfig.CheckExistence.EventSources)
+            {
+                if (IsNullOrWhiteSpace(eventSourceToCheck.Name))
+                {
+                    Console.WriteLine(
+                        "ArgumentException: An event source listed in the config file has no name.");
+                    Console.WriteLine();
+                    errorOccurred = true;
+                    continue;
+                }
+
+                Console.WriteLine("Checking event source {0} on {1}...",
+                        eventSourceToCheck.Name, machineNameDisplayText);
+                try
+                {
+                    if (EventLog.SourceExists(eventSourceToCheck.Name,
+                            _eventLogsConfig.MachineName))
+                    {
+                        Console.WriteLine("{0}Source exists.", indent);
+                    }
+                    else
+                    {
+                        Console.WriteLine("{0}SOURCE NOT FOUND.", indent);
+                    }
+                }
+                catch (SecurityException ex)
+                {
+                    DisplaySecurityMessage(ex);
+                    errorOccurred = true;
+                }
+                Console.WriteLine();
+            }
+        }
+
+        [MenuMethod("List event logs and sources specified in config", 
+            DisplayOrder = 4)]
         public static void ListEventLogsAndSources()
         {
             string errorMessage = null;
