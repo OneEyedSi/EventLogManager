@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EventLogsCreateRemove")]
-[assembly: AssemblyDescription("Creates or removes event logs and/or event sources from the local or a remote machine.")]
+[assembly: AssemblyTitle("EventLogManager")]
+[assembly: AssemblyDescription("Utilities to create, remove or list event logs and/or event sources on the local or a remote machine.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Simon Elms")]
-[assembly: AssemblyProduct("EventLogsCreateRemove")]
+[assembly: AssemblyProduct("EventLogManager")]
 [assembly: AssemblyCopyright("Copyright © Simon Elms 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
 //[assembly: AssemblyFileVersion("1.0.0.0")]
