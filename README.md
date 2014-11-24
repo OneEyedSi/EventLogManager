@@ -2,10 +2,13 @@ EventLogManager
 ===============
 
 C# console application of utilities for working with event logs:
-	1) Add: Adds event logs and sources specified in the config file to the specified machine;
-	2) Remove: Removes event logs and sources specified in the config file from the specified machine;
-	3) Check: Checks existence of the event logs and sources specified in the config file;
-	4) List: Lists details of the event logs specified in the config file.
+	
+1. Add: Adds event logs and sources specified in the config file to the specified machine;
+2. Remove: Removes event logs and sources specified in the config file from the specified machine;
+3. Check: Checks existence of the event logs and sources specified in the config file;
+4. List: Lists details of the event logs specified in the config file.
+
+The application is designed as a light-weight utility that can reliably create event logs and sources with the same names on different servers (eg dev, test and production servers).  Specifying the event log and source names in the config file ensures reproducibility across different servers.
 
 Warning
 -------
@@ -31,7 +34,7 @@ Format of the config file
 -------------------------
 The config file contains a custom ConfigurationSection, EventLogsSection.  This section of the config file can contain four optional elements: **add**, **remove**, **checkExistence** and **list**:
 
-    <eventLogs >
+    <eventLogs>
       <add>
         <eventLogs>
           <eventLog name="MyCustomEventLog">
@@ -69,13 +72,17 @@ The **add** element must contain an **eventLogs** collection.  Each **eventLog**
 
 The **remove** element can contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection should contain at least one **eventLog** element.  The **eventSources** collection should contain at least one **eventSource** element.
 
-When an event log is removed all associated event sources are automatically removed as well; there is no need to explicitly add the event sources to the **remove** element if the event log associated with them is being removed.  When an event source is being removed only the event source name needs to be specified; the built-in .NET code does not need the associated event log name if it is just deleting an event source.
+When an event log is removed all associated event sources are automatically removed as well; there is no need to explicitly add the event sources to the **remove** element if the event log associated with them is being removed.  
+
+When an event source is being removed only the event source name needs to be specified; the built-in .NET code does not need the associated event log name if it is just deleting an event source.
 
 The **checkExistence** element can contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection should contain at least one **eventLog** element.  The **eventSources** collection should contain at least one **eventSource** element.
 
 If an event log is found to exist all the event sources associated with that log will be listed.  If an event source is found to exist the event log associated with it will be displayed.
 
-The **list** element can must contain an **eventLogs** collection.  The eventLogs should **not** contain nested event sources.  All event sources associated with the event log will be listed.  To list all event logs on a machine leave the list element empty: <list />.  
+The **list** element can contain an optional **eventLogs** collection.  The eventLogs should **not** contain nested event sources.  All event sources associated with the event log will be listed, if the event log exists.  
+
+To list all event logs on a machine leave the list element empty: `<list />`.  
 
 **NOTE:** The Application and System event logs may contain hundreds of event sources each.  Be aware of this when listing those event logs, or when listing all event logs.
 
