@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 
-namespace EventLogsCreateRemove.CustomConfigSection
+namespace EventLogManager.CustomConfigSection
 {
     public class EventLogsSection : ConfigurationSection
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace EventLogsCreateRemove.CustomConfigSection
+namespace EventLogManager.CustomConfigSection
 {
     public class EventSourceElement : ConfigurationElement
     {

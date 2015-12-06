@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace EventLogsCreateRemove.CustomConfigSection
+namespace EventLogManager.CustomConfigSection
 {
     [ConfigurationCollection(typeof(EventLogElement))]
     public class EventLogsCollection : ConfigurationElementCollection

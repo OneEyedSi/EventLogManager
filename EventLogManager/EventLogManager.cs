@@ -5,11 +5,11 @@ using System.Diagnostics;
 using System.Security;
 using System.Text;
 
-using EventLogsCreateRemove.CustomConfigSection;
+using EventLogManager.CustomConfigSection;
 using MenuLibrary;
 using Utilities.DisplayHelper;
 
-namespace EventLogsCreateRemove
+namespace EventLogManager
 {
     [MenuClass("Event Log Manager Menu")]
     public class EventLogManager

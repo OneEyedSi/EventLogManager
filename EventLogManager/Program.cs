@@ -4,7 +4,7 @@ using System.Text;
 
 using MenuLibrary;
 
-namespace EventLogsCreateRemove
+namespace EventLogManager
 {
     /// <summary>
     /// Application that creates or removes event logs and event sources.
