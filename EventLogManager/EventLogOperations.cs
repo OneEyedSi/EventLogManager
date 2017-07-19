@@ -9,8 +9,20 @@ using Microsoft.Win32;
 
 namespace EventLogManager
 {
+    /// <summary>
+    /// Performs operations related to event logs and event log sources, such as creating or 
+    /// removing logs.
+    /// </summary>
     public class EventLogOperations
     {
+        /// <summary>
+        /// Creates the specified event logs and sources on the specified machine.
+        /// </summary>
+        /// <param name="machineName">The name of the machine to create the logs and sources on.  A 
+        /// value of null, an empty string or "." specifies the local machine this application is 
+        /// running on.</param>
+        /// <param name="eventLogsToCreate">A list of event logs and associated sources to create.
+        /// </param>
         public static void CreateEventLogsAndSources(string machineName,
             List<EventLogInfo> eventLogsToCreate)
         {
@@ -67,6 +79,24 @@ namespace EventLogManager
             }
         }
 
+        /// <summary>
+        /// Removes the specified event logs and sources from the specified machine.
+        /// </summary>
+        /// <param name="machineName">The name of the machine to remove the logs and sources from.  
+        /// A value of null, an empty string or "." specifies the local machine this application is 
+        /// running on.</param>
+        /// <param name="eventLogNamesToRemove">A list of event logs to remove.  The list may be 
+        /// empty, in which case only the specified event sources will be removed.</param>
+        /// <param name="eventSourceNamesToRemove">A list of event sources to remove.  The list may 
+        /// be empty.</param>
+        /// <remarks>It is not possible to remove sources which have the same name as their 
+        /// associated event logs.  This is a limitation of the .NET EventLog.DeleteEventSource 
+        /// method.  Instead of removing the source the user should remove the log of the same 
+        /// name.
+        /// 
+        /// When an event log is removed all its associated event sources are automatically 
+        /// removed as well. There is no need to specify the event sources separately if the logs 
+        /// they are associated with are going to be removed.</remarks>
         public static void RemoveEventLogsAndSources(string machineName,
             List<string> eventLogNamesToRemove, List<string> eventSourceNamesToRemove)
         {
@@ -149,6 +179,16 @@ namespace EventLogManager
             }
         }
 
+        /// <summary>
+        /// Checks the existence of the specified event logs and sources on the specified machine.
+        /// </summary>
+        /// <param name="machineName">The name of the machine to check the logs and sources on.  
+        /// A value of null, an empty string or "." specifies the local machine this application is 
+        /// running on.</param>
+        /// <param name="eventLogNamesToCheck">A list of event logs to check.</param>
+        /// <param name="eventSourceNamesToCheck">A list of event sources to check.</param>
+        /// <remarks>If a specified log is found the sources associated with it are listed.  If 
+        /// a specified source is found the log associated with it is displayed.</remarks>
         public static void CheckEventLogsAndSources(string machineName,
             List<string> eventLogNamesToCheck, List<string> eventSourceNamesToCheck)
         {
@@ -233,6 +273,16 @@ namespace EventLogManager
             }
         }
 
+        /// <summary>
+        /// Lists the specified event logs and their associated sources on the specified machine.
+        /// </summary>
+        /// <param name="machineName">The name of the machine to list the logs and sources on.  A 
+        /// value of null, an empty string or "." specifies the local machine this application is 
+        /// running on.</param>
+        /// <param name="eventLogsToList">A list of event logs to list.  If the list is empty then 
+        /// all event logs and all their associated sources will be listed.</param>
+        /// <remarks>If all event logs on a machine are listed hundreds of sources may be listed, 
+        /// as the Application and System event logs may contain hundreds of sources each.</remarks>
         public static void ListEventLogsAndSources(string machineName, 
             List<string> eventLogsToList)
         {
