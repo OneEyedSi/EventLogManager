@@ -345,7 +345,10 @@ namespace EventLogManager
             Console.WriteLine();
             if (errorOccurred)
             {
+                ConsoleColor originalTextColour = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("COMPLETED WITH ERRORS - SEE ERROR MESSAGES ABOVE.");
+                Console.ForegroundColor = originalTextColour;
             }
             else
             {
@@ -372,7 +375,7 @@ namespace EventLogManager
             {
                 errorMessage =
                     string.Format("Unable to access registry key"
-                        + " for event log {0} on {1}.",
+                        + " for event log '{0}' on {1}.",
                         logName, machineNameDisplayText);
                 EventLogHelper.DisplaySecurityMessage(ex, errorMessage);
                 return completedWithError;
@@ -394,7 +397,7 @@ namespace EventLogManager
             {
                 errorMessage =
                 string.Format("Unable to get all registry sub-keys"
-                        + " for event log {0} on machine {1}.",
+                        + " for event log '{0}' on {1}.",
                         logName, machineNameDisplayText);
                 EventLogHelper.DisplaySecurityMessage(ex, errorMessage);
                 return completedWithError;

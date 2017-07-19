@@ -64,6 +64,8 @@ namespace EventLogManager
 
             Console.WriteLine();
 
+            ConsoleColor originalTextColour = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
             ConsoleDisplayHelper.ShowHeadedText(0,
                 "SecurityException:"
                 + errorMessage
@@ -79,6 +81,7 @@ namespace EventLogManager
                 ConsoleDisplayHelper.ShowHeadedText(2, "Inner Exception - {0}",
                 wrapText, includeNewLine, ex.InnerException.Message);
             }
+            Console.ForegroundColor = originalTextColour;
         }
 
         public static bool IsLocalMachine(string machineName)
