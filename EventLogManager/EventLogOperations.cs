@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Security;
 using DisplayHelper;
 using EventLogManager.CustomConfigSection;
+using Microsoft.SqlServer.Server;
 using Microsoft.Win32;
 
 namespace EventLogManager
@@ -13,22 +14,23 @@ namespace EventLogManager
         public static void CreateEventLogsAndSources(string machineName,
             List<EventLogInfo> eventLogsToCreate)
         {
+            machineName = CleanMachineName(machineName);
             string machineNameDisplayText = EventLogHelper.GetMachineNameDisplayText(machineName);
 
             Console.WriteLine();
 
             foreach (EventLogInfo eventLogToCreate in eventLogsToCreate)
             {
-                if (eventLogToCreate.EventSourceNames == null
-                    || eventLogToCreate.EventSourceNames.Count == 0)
-                {
-                    throw new ArgumentException("No event sources specified for new event log."
-                        + "  Cannot create event log without an event source.");
-                }
-
                 if (EventLogHelper.IsNullOrWhiteSpace(eventLogToCreate.Name))
                 {
                     throw new ArgumentException("Cannot create event log without a name.");
+                }
+
+                if (eventLogToCreate.EventSourceNames == null
+                    || eventLogToCreate.EventSourceNames.Count == 0)
+                {
+                    eventLogToCreate.EventSourceNames = new List<string>();
+                    eventLogToCreate.EventSourceNames.Add(eventLogToCreate.Name);
                 }
 
                 foreach (string eventSourceNameToCreate in eventLogToCreate.EventSourceNames)
@@ -68,6 +70,7 @@ namespace EventLogManager
         public static void RemoveEventLogsAndSources(string machineName,
             List<string> eventLogNamesToRemove, List<string> eventSourceNamesToRemove)
         {
+            machineName = CleanMachineName(machineName);
             string machineNameDisplayText = EventLogHelper.GetMachineNameDisplayText(machineName);
 
             Console.WriteLine();
@@ -114,12 +117,29 @@ namespace EventLogManager
                     if (!EventLog.SourceExists(eventSourceNameToRemove, machineName))
                     {
                         Console.WriteLine("Event source does not exist.");
+                        Console.WriteLine();
+                        continue;
                     }
-                    else
+
+                    string associatedLogName =
+                        EventLog.LogNameFromSourceName(eventSourceNameToRemove, machineName);
+
+                    if (string.Equals(eventSourceNameToRemove, associatedLogName, 
+                        StringComparison.CurrentCultureIgnoreCase))
                     {
-                        EventLog.DeleteEventSource(eventSourceNameToRemove, machineName);
-                        Console.WriteLine("Done.");
+                        string message = string.Format("Cannot delete event source because it has "
+                                                       + "the same name as the event log.{0}"
+                                                       + "If you wish to delete this event source "
+                                                       + "and its associated log try again but "
+                                                       + "delete the log, not the source.", 
+                                                       Environment.NewLine);
+                        Console.WriteLine(message);
+                        Console.WriteLine();
+                        continue;
                     }
+
+                    EventLog.DeleteEventSource(eventSourceNameToRemove, machineName);
+                    Console.WriteLine("Done.");
                 }
                 catch (SecurityException ex)
                 {
@@ -134,7 +154,8 @@ namespace EventLogManager
         {
             string errorMessage = null;
             bool errorOccurred = false;
-            string indent = new string(' ', 4);
+
+            machineName = CleanMachineName(machineName);
             string machineNameDisplayText = EventLogHelper.GetMachineNameDisplayText(machineName);
 
             Console.WriteLine();
@@ -156,15 +177,15 @@ namespace EventLogManager
                 {
                     if (EventLog.Exists(eventLogNameToCheck, machineName))
                     {
-                        Console.WriteLine("{0}Log exists.", indent);
+                        Console.WriteLine("{0}Log exists.", GlobalConstant.Indent);
                         bool completedSuccessfully = EventLogOperations.ListSourcesForEventLog(
-                            machineName, machineNameDisplayText, 
-                            eventLogNameToCheck, indent);
+                            machineName, machineNameDisplayText,
+                            eventLogNameToCheck, GlobalConstant.Indent);
                         errorOccurred |= !completedSuccessfully;
                     }
                     else
                     {
-                        Console.WriteLine("{0}LOG NOT FOUND.", indent);
+                        Console.WriteLine("{0}LOG NOT FOUND.", GlobalConstant.Indent);
                     }
                 }
                 catch (SecurityException ex)
@@ -192,15 +213,15 @@ namespace EventLogManager
                 {
                     if (EventLog.SourceExists(eventSourceNameToCheck, machineName))
                     {
-                        Console.WriteLine("{0}Source exists.", indent);
+                        Console.WriteLine("{0}Source exists.", GlobalConstant.Indent);
                         string associatedLogName =
                             EventLog.LogNameFromSourceName(eventSourceNameToCheck, machineName);
                         Console.WriteLine("{0}Associated Event Log: {1}",
-                            indent, associatedLogName);
+                            GlobalConstant.Indent, associatedLogName);
                     }
                     else
                     {
-                        Console.WriteLine("{0}SOURCE NOT FOUND.", indent);
+                        Console.WriteLine("{0}SOURCE NOT FOUND.", GlobalConstant.Indent);
                     }
                 }
                 catch (SecurityException ex)
@@ -218,6 +239,7 @@ namespace EventLogManager
             string errorMessage = null;
             bool errorOccurred = false;
             string indent = new string(' ', 4);
+            machineName = CleanMachineName(machineName);
             string machineNameDisplayText = EventLogHelper.GetMachineNameDisplayText(machineName);
 
             Console.WriteLine();
@@ -281,7 +303,7 @@ namespace EventLogManager
             }
         }
 
-        public static bool ListSourcesForEventLog(string machineName,
+        private static bool ListSourcesForEventLog(string machineName,
             string machineNameDisplayText, string logName, string indent)
         {
             string errorMessage = null;
@@ -340,6 +362,16 @@ namespace EventLogManager
             }
 
             return completedSuccessfully;
+        }
+
+        private static string CleanMachineName(string rawMachineName)
+        {
+            if (EventLogHelper.IsLocalMachine(rawMachineName))
+            {
+                return ".";
+            }
+
+            return rawMachineName.Trim();
         }
     }
 }
