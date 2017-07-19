@@ -152,12 +152,6 @@ namespace EventLogManager
                 = GetStringList("Enter comma-separated list of event logs to list:",
                     additionalInfoText);
 
-            if (eventLogsNamesToList.Count == 0)
-            {
-                Console.WriteLine("Cannot list logs and sources, none specified.");
-                return;
-            }
-
             EventLogOperations.ListEventLogsAndSources(machineName, eventLogsNamesToList);
         }
 
