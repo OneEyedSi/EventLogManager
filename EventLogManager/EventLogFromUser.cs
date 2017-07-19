@@ -28,6 +28,7 @@ namespace EventLogManager
 
         private static void CreateEventLogsAndSources(string machineName)
         {
+            DisplayCaseSensitivityWarning();
             Console.WriteLine("Enter comma-separated list of event logs in the form:");
             bool doNotWrapText = false;
             bool addNewLine = true;
@@ -66,6 +67,7 @@ namespace EventLogManager
 
         private static void RemoveEventLogsAndSources(string machineName)
         {
+            DisplayCaseSensitivityWarning();
             string additionalInfoText = "([ENTER] to skip)";
             List<string> eventLogNamesToRemove
                 = GetStringList("Enter comma-separated list of event logs to remove:",
@@ -101,6 +103,7 @@ namespace EventLogManager
 
         private static void CheckEventLogsAndSources(string machineName)
         {
+            DisplayCaseSensitivityWarning();
             string additionalInfoText = "([ENTER] to skip)";
             List<string> eventLogNamesToCheck
                 = GetStringList("Enter comma-separated list of event logs to check:",
@@ -136,11 +139,15 @@ namespace EventLogManager
 
         private static void ListEventLogsAndSources(string machineName)
         {
-            string additionalInfoText =
-                string.Format("([ENTER] to list all event logs on the machine){0}"
-                    + "{1}WARNING: Application and System event logs may contain hundreds of {0}"
-                    + "{1}sources each.  Be aware of this when listing all event logs and sources.",
+            DisplayCaseSensitivityWarning();
+            string warningMessages
+                = string.Format("WARNING: Application and System event logs may contain hundreds of {0}"
+                                + "{1}sources each.  Be aware of this when listing all event logs and sources.",
                     Environment.NewLine, GlobalConstant.Indent);
+            Console.WriteLine(warningMessages);
+            Console.WriteLine();
+
+            string additionalInfoText = "([ENTER] to list all event logs on the machine)";
             List<string> eventLogsNamesToList
                 = GetStringList("Enter comma-separated list of event logs to list:",
                     additionalInfoText);
@@ -159,6 +166,12 @@ namespace EventLogManager
             Console.WriteLine("Enter the name of the machine to operate on ([ENTER] for local machine):");
             string machineName = Console.ReadLine();
             return machineName;
+        }
+
+        private static void DisplayCaseSensitivityWarning()
+        {
+            Console.WriteLine("WARNING: LOG AND SOURCE NAMES ARE CASE-SENSITIVE.");
+            Console.WriteLine();
         }
 
         private static List<EventLogInfo> ParseListOfLogsAndSources(string commaSeparatedLogList)
