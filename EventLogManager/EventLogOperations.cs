@@ -331,11 +331,11 @@ namespace EventLogManager
             {
                 if (!existingLogNames.Contains(logNameToList))
                 {
-                    Console.WriteLine("Log {0}: [NOT FOUND ON MACHINE]", logNameToList);
+                    Console.WriteLine("Log '{0}': [NOT FOUND ON MACHINE]", logNameToList);
                     continue;
                 }
 
-                Console.WriteLine("Log {0}:", logNameToList);
+                Console.WriteLine("Log '{0}':", logNameToList);
 
                 bool completedSuccessfully = EventLogOperations.ListSourcesForEventLog(
                     machineName, machineNameDisplayText, logNameToList, indent);

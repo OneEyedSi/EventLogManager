@@ -202,7 +202,15 @@ namespace EventLogManager
                         StringSplitOptions.RemoveEmptyEntries);
                     logName = logInfoParts[0];
                     List<string> sourceNames = new List<string>();
-                    sourceNames.Add(logInfoParts[1]);
+                    string sourceName = logInfoParts[1];
+                    // If there is only one source for the given log then strip the "]" from the 
+                    //  source name.
+                    if (sourceName.Contains("]"))
+                    {
+                        sourceName = sourceName.TrimEnd(new char[] { ']' });
+                        isInSourceList = false;
+                    }
+                    sourceNames.Add(sourceName);
                     logInfo = new EventLogInfo(logName, sourceNames);
                     logList.Add(logInfo);
                 }
