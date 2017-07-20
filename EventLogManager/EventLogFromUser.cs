@@ -144,7 +144,7 @@ namespace EventLogManager
                 = string.Format("WARNING: Application and System event logs may contain hundreds of {0}"
                                 + "{1}sources each.  Be aware of this when listing all event logs and sources.",
                     Environment.NewLine, GlobalConstant.Indent);
-            Console.WriteLine(warningMessages);
+            ConsoleHelper.DisplayWarningMessage(warningMessages);
             Console.WriteLine();
 
             string additionalInfoText = "([ENTER] to list all event logs on the machine)";
@@ -164,7 +164,7 @@ namespace EventLogManager
 
         private static void DisplayCaseSensitivityWarning()
         {
-            Console.WriteLine("WARNING: LOG AND SOURCE NAMES ARE CASE-SENSITIVE.");
+            ConsoleHelper.DisplayWarningMessage("WARNING: LOG AND SOURCE NAMES ARE CASE-SENSITIVE.");
             Console.WriteLine();
         }
 

@@ -72,7 +72,7 @@ namespace EventLogManager
                     }
                     catch (SecurityException ex)
                     {
-                        EventLogHelper.DisplaySecurityMessage(ex);
+                        ConsoleHelper.DisplaySecurityMessage(ex);
                     }
                     Console.WriteLine();
                 }
@@ -128,7 +128,7 @@ namespace EventLogManager
                 }
                 catch (SecurityException ex)
                 {
-                    EventLogHelper.DisplaySecurityMessage(ex);
+                    ConsoleHelper.DisplaySecurityMessage(ex);
                 }
                 Console.WriteLine();
             }
@@ -173,7 +173,7 @@ namespace EventLogManager
                 }
                 catch (SecurityException ex)
                 {
-                    EventLogHelper.DisplaySecurityMessage(ex);
+                    ConsoleHelper.DisplaySecurityMessage(ex);
                 }
                 Console.WriteLine();
             }
@@ -230,7 +230,7 @@ namespace EventLogManager
                 }
                 catch (SecurityException ex)
                 {
-                    EventLogHelper.DisplaySecurityMessage(ex);
+                    ConsoleHelper.DisplaySecurityMessage(ex);
                     errorOccurred = true;
                 }
                 Console.WriteLine();
@@ -266,7 +266,7 @@ namespace EventLogManager
                 }
                 catch (SecurityException ex)
                 {
-                    EventLogHelper.DisplaySecurityMessage(ex);
+                    ConsoleHelper.DisplaySecurityMessage(ex);
                     errorOccurred = true;
                 }
                 Console.WriteLine();
@@ -306,7 +306,7 @@ namespace EventLogManager
                 errorMessage =
                     string.Format("Unable to get all event logs on {0}.",
                         machineNameDisplayText);
-                EventLogHelper.DisplaySecurityMessage(ex, errorMessage);
+                ConsoleHelper.DisplaySecurityMessage(ex, errorMessage);
                 return;
             }
 
@@ -377,7 +377,7 @@ namespace EventLogManager
                     string.Format("Unable to access registry key"
                         + " for event log '{0}' on {1}.",
                         logName, machineNameDisplayText);
-                EventLogHelper.DisplaySecurityMessage(ex, errorMessage);
+                ConsoleHelper.DisplaySecurityMessage(ex, errorMessage);
                 return completedWithError;
             }
 
@@ -399,7 +399,7 @@ namespace EventLogManager
                 string.Format("Unable to get all registry sub-keys"
                         + " for event log '{0}' on {1}.",
                         logName, machineNameDisplayText);
-                EventLogHelper.DisplaySecurityMessage(ex, errorMessage);
+                ConsoleHelper.DisplaySecurityMessage(ex, errorMessage);
                 return completedWithError;
             }
 

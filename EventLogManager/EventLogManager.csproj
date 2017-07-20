@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="CustomConfigSection\LogsAndSourcesElement.cs" />
     <Compile Include="CustomConfigSection\ListElement.cs" />
     <Compile Include="CustomConfigSection\EventLogElement.cs" />

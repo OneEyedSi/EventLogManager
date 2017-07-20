@@ -91,17 +91,17 @@ The **add** element must contain an **eventLogs** collection.  Each **eventLog**
 
 In addition to the creating the specified event sources, for each event log a default source will be created automatically with the same name as the log. 
 
-The **remove** element can contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection, if supplied, should contain at least one **eventLog** element.  The **eventSources** collection, if supplied, should contain at least one **eventSource** element.
+The **remove** element may contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection, if supplied, should contain at least one **eventLog** element.  The **eventSources** collection, if supplied, should contain at least one **eventSource** element.
 
 When an event log is removed all associated event sources are automatically removed as well; there is no need to explicitly add the event sources to the **remove** element if the event log associated with them is being removed.  
 
 When an event source is being removed only the event source name needs to be specified; the built-in .NET code does not need the associated event log name if it is just deleting an event source.
 
-The **checkExistence** element can contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection, if supplied, should contain at least one **eventLog** element.  The **eventSources** collection, if supplied, should contain at least one **eventSource** element.
+The **checkExistence** element may contain two optional elements, an **eventLogs** collection and an **eventSources** collection.  The **eventLogs** collection, if supplied, should contain at least one **eventLog** element.  The **eventSources** collection, if supplied, should contain at least one **eventSource** element.
 
 If a specified event log is found to exist all the event sources associated with that log will be listed.  If a specified event source is found to exist the event log associated with it will be displayed.
 
-The **list** element can contain an optional **eventLogs** collection.  The eventLogs should **not** contain nested event sources.  All event sources associated with the event log will be listed, if the event log exists.  
+The **list** element may contain an optional **eventLogs** collection.  The eventLogs should **not** contain nested event sources.  All event sources associated with the event log will be listed, if the event log exists.  
 
 To list all event logs on a machine leave the list element empty: `<list />`.  
 
