@@ -47,44 +47,45 @@ When removing an event log or event source the built-in .NET code has to edit th
 Format of the config file
 -------------------------
 The config file contains a custom ConfigurationSection, EventLogsSection.  This section of the config file can contain four optional elements: **add**, **remove**, **checkExistence** and **list**:
-<configuration>
-  <configSections>
-    <section name="eventLogs" type="EventLogManager.CustomConfigSection.EventLogsSection, EventLogManager"/>
-  </configSections> 
-  <eventLogs>
-    <add>
+
+    <configuration>
+      <configSections>
+        <section name="eventLogs" type="EventLogManager.CustomConfigSection.EventLogsSection, EventLogManager"/>
+      </configSections> 
       <eventLogs>
-        <eventLog name="MyCustomEventLog">
+        <add>
+          <eventLogs>
+            <eventLog name="MyCustomEventLog">
+              <eventSources>
+                <eventSource name="CustomEventSource" />
+              </eventSources>
+            </eventLog>
+          </eventLogs>
+        </add>
+        <remove>
+          <eventLogs>
+            <eventLog name="MyCustomEventLog" />
+          </eventLogs>
           <eventSources>
-            <eventSource name="CustomEventSource" />
+            <eventSource name="EventSource1" />
+            <eventSource name="EventSource2" />
           </eventSources>
-        </eventLog>
-      </eventLogs>
-    </add>
-    <remove>
-      <eventLogs>
-        <eventLog name="MyCustomEventLog" />
-      </eventLogs>
-      <eventSources>
-        <eventSource name="EventSource1" />
-        <eventSource name="EventSource2" />
-      </eventSources>
-    </remove>
-    <checkExistence>
-      <eventLogs>
-        <eventLog name="MyCustomEventLog"/>
-      </eventLogs>
-      <eventSources>
-        <eventSource name="EventSource1"/>
-      </eventSources>
-    </checkExistence>
-    <list>
-      <eventLogs>
-        <eventLog name="MyCustomEventLog"/>
-      </eventLogs>
-    </list>
-  </eventLogs>  
-</configuration>
+        </remove>
+        <checkExistence>
+          <eventLogs>
+            <eventLog name="MyCustomEventLog"/>
+          </eventLogs>
+          <eventSources>
+            <eventSource name="EventSource1"/>
+          </eventSources>
+        </checkExistence>
+        <list>
+          <eventLogs>
+            <eventLog name="MyCustomEventLog"/>
+          </eventLogs>
+        </list>
+      </eventLogs>  
+    </configuration>
 
 The **add** element must contain an **eventLogs** collection.  Each **eventLog** in the collection may optionally contain a nested **eventSources** collection with one or more **eventSource** elements.  
 
@@ -108,6 +109,6 @@ To list all event logs on a machine leave the list element empty: `<list />`.
 
 To operate on the event logs and event sources of another machine, specify the optional **machineName** attribute of the top-level **eventLogs** element:
 
-  <eventLogs machineName="MyServerName">
-	:
-  </eventLogs>
+    <eventLogs machineName="MyServerName">
+      :
+    </eventLogs>
